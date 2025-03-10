@@ -4,18 +4,16 @@ import { router } from 'expo-router';
 import { useVideoStore } from '../store/videoStore';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
-import { formatDate } from '../utils/formatters';
 import { CategoryFilter } from '../components/ui/CategoryFilter';
 import { useState, useMemo, useCallback } from 'react';
 import { useColorScheme } from 'nativewind';
 import { AnimatedPage } from '../components/ui/AnimatedPage';
 import { VideoCard } from '../components/video/VideoCard';
 import { Button } from '../components/ui/Button';
+import { Video } from '../store/videoStore';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
-const StyledTouchableOpacity = styled(TouchableOpacity);
-const StyledImage = styled(Image);
 const StyledTextInput = styled(TextInput);
 
 export default function HomeScreen() {
@@ -58,7 +56,7 @@ export default function HomeScreen() {
     }, 1000);
   }, []);
   
-  const renderVideoCard = useCallback(({ item }: { item: any }) => (
+  const renderVideoCard = useCallback(({ item }: { item: Video }) => (
     <VideoCard 
       video={item} 
       onPress={() => navigateToVideoDetail(item.id)} 
@@ -66,26 +64,30 @@ export default function HomeScreen() {
   ), [navigateToVideoDetail]);
   
   const EmptyListComponent = useCallback(() => (
-    <StyledView className="flex-1 items-center justify-center p-8">
+    <StyledView className="flex-1 items-center justify-center py-20">
       <Ionicons 
         name="videocam-outline" 
         size={64} 
-        color={isDark ? '#60A5FA' : '#1E3A8A'} 
+        color={isDark ? '#6B7280' : '#9CA3AF'} 
       />
-      <StyledText className="text-gray-700 dark:text-gray-300 mt-4 text-lg font-medium text-center">
-        Henüz video eklenmemiş
+      <StyledText className="text-gray-500 dark:text-gray-400 text-center mt-4 text-lg">
+        {searchQuery ? 'Arama sonucu bulunamadı' : 
+          selectedCategory === 'all' 
+            ? 'Henüz video eklenmemiş'
+            : 'Bu kategoride video bulunamadı'}
       </StyledText>
-      <StyledText className="text-gray-600 dark:text-gray-400 mt-2 text-center">
-        İlk videonuzu eklemek için aşağıdaki butona tıklayın
+      <StyledText className="text-gray-400 dark:text-gray-500 text-center mt-2">
+        {searchQuery ? 'Farklı bir arama terimi deneyin' :
+          selectedCategory === 'all'
+            ? 'Yeni bir video eklemek için + butonuna tıklayın'
+            : 'Farklı bir kategori seçin veya yeni video ekleyin'}
       </StyledText>
     </StyledView>
-  ), [isDark]);
+  ), [isDark, searchQuery, selectedCategory]);
   
   const ItemSeparatorComponent = useCallback(() => (
     <StyledView className="h-4" />
   ), []);
-  
-
   
   return (
     <AnimatedPage animationType="fade">
@@ -106,49 +108,31 @@ export default function HomeScreen() {
             selectedCategory={selectedCategory}
           />
           
-          {filteredVideos.length === 0 ? (
-            <StyledView className="flex-1 items-center justify-center py-20">
-              <Ionicons name="videocam-outline" size={64} color={isDark ? '#6B7280' : '#9CA3AF'} />
-              <StyledText className="text-gray-500 dark:text-gray-400 text-center mt-4 text-lg">
-                {searchQuery ? 'Arama sonucu bulunamadı' : 
-                  selectedCategory === 'all' 
-                    ? 'Henüz video eklenmemiş'
-                    : 'Bu kategoride video bulunamadı'}
-              </StyledText>
-              <StyledText className="text-gray-400 dark:text-gray-500 text-center mt-2">
-                {searchQuery ? 'Farklı bir arama terimi deneyin' :
-                  selectedCategory === 'all'
-                    ? 'Yeni bir video eklemek için + butonuna tıklayın'
-                    : 'Farklı bir kategori seçin veya yeni video ekleyin'}
-              </StyledText>
-            </StyledView>
-          ) : (
-            <FlatList
-              data={filteredVideos}
-              keyExtractor={(item) => item.id}
-              renderItem={renderVideoCard}
-              contentContainerStyle={{ 
-                padding: 16,
-                paddingBottom: 100,
-                flexGrow: 1
-              }}
-              ListEmptyComponent={EmptyListComponent}
-              ItemSeparatorComponent={ItemSeparatorComponent}
-              showsVerticalScrollIndicator={false}
-              initialNumToRender={5}
-              maxToRenderPerBatch={5}
-              windowSize={5}
-              removeClippedSubviews={true}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={onRefresh}
-                  colors={[isDark ? '#60A5FA' : '#1E3A8A']}
-                  tintColor={isDark ? '#60A5FA' : '#1E3A8A'}
-                />
-              }
-            />
-          )}
+          <FlatList
+            data={filteredVideos}
+            keyExtractor={(item) => item.id}
+            renderItem={renderVideoCard}
+            contentContainerStyle={{ 
+              padding: 16,
+              paddingBottom: 100,
+              flexGrow: 1
+            }}
+            ListEmptyComponent={EmptyListComponent}
+            ItemSeparatorComponent={ItemSeparatorComponent}
+            showsVerticalScrollIndicator={false}
+            initialNumToRender={5}
+            maxToRenderPerBatch={5}
+            windowSize={5}
+            removeClippedSubviews={true}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={[isDark ? '#60A5FA' : '#1E3A8A']}
+                tintColor={isDark ? '#60A5FA' : '#1E3A8A'}
+              />
+            }
+          />
         </StyledView>
         
         <StyledView className="absolute bottom-6 right-6">
@@ -157,6 +141,7 @@ export default function HomeScreen() {
             onPress={navigateToNewVideo}
             variant="primary"
             className="w-16 h-16 rounded-full"
+            textClassName='text-3xl'
           />
         </StyledView>
       </StyledView>

@@ -1,6 +1,6 @@
 import { styled } from 'nativewind';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useColorScheme } from 'nativewind';
 
 const StyledView = styled(View);
@@ -31,6 +31,10 @@ export function CategoryFilter({
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
   
+  useEffect(() => {
+    setSelected(selectedCategory);
+  }, [selectedCategory]);
+  
   const handleSelect = (categoryId: string) => {
     setSelected(categoryId);
     onSelectCategory(categoryId);
@@ -41,24 +45,26 @@ export function CategoryFilter({
       horizontal 
       showsHorizontalScrollIndicator={false}
       className="mb-4"
+      contentContainerStyle={{ paddingHorizontal: 8 }}
     >
       <StyledView className="flex-row">
         {categories.map((category) => (
           <StyledTouchableOpacity
             key={category.id}
             onPress={() => handleSelect(category.id)}
-            className={`mr-2 px-4 py-2 rounded-full ${
+            className={`mr-3 px-5 py-2 rounded-full ${
               selected === category.id
                 ? isDark ? 'bg-blue-800' : 'bg-blue-900'
                 : isDark ? 'bg-gray-700' : 'bg-gray-200'
             }`}
+            style={{ minWidth: 80 }}
           >
             <StyledText
               className={`${
                 selected === category.id
                   ? 'text-white font-medium'
                   : isDark ? 'text-gray-300' : 'text-gray-700'
-              }`}
+              } text-center`}
             >
               {category.name}
             </StyledText>

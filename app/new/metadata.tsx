@@ -101,10 +101,6 @@ export default function MetadataScreen() {
         contentContainerStyle={{ paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
       >
-        <StyledText className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
-          Video Bilgileri
-        </StyledText>
-        
         <FormInput
           control={control}
           name="name"
