@@ -68,10 +68,7 @@ Video Günlüğüm, kişisel video anılarınızı düzenlemek, kategorize etmek
 ## 📋 Yapılacaklar
 
 - [ ] Video kırpma için FFmpeg entegrasyonu
-- [ ] Video filtreleri ve efektler
-- [ ] Bulut yedekleme seçeneği
 - [ ] Çoklu dil desteği
-- [ ] Gelişmiş video düzenleme özellikleri
 
 ## 🤝 Katkıda Bulunma
 
