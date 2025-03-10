@@ -1,14 +1,16 @@
 import { styled } from 'nativewind';
-import { View, Text, FlatList, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image, TextInput, RefreshControl } from 'react-native';
 import { router } from 'expo-router';
 import { useVideoStore } from '../store/videoStore';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { formatDate } from '../utils/formatters';
 import { CategoryFilter } from '../components/ui/CategoryFilter';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useColorScheme } from 'nativewind';
 import { AnimatedPage } from '../components/ui/AnimatedPage';
+import { VideoCard } from '../components/video/VideoCard';
+import { Button } from '../components/ui/Button';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -22,8 +24,8 @@ export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const [refreshing, setRefreshing] = useState(false);
   
-  // Filtreleme işlemi
   const filteredVideos = useMemo(() => {
     return videos.filter((video) => {
       const matchesSearch = 
@@ -49,12 +51,48 @@ export default function HomeScreen() {
     router.push(`/video/${id}`);
   };
   
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
+  
+  const renderVideoCard = useCallback(({ item }: { item: any }) => (
+    <VideoCard 
+      video={item} 
+      onPress={() => navigateToVideoDetail(item.id)} 
+    />
+  ), [navigateToVideoDetail]);
+  
+  const EmptyListComponent = useCallback(() => (
+    <StyledView className="flex-1 items-center justify-center p-8">
+      <Ionicons 
+        name="videocam-outline" 
+        size={64} 
+        color={isDark ? '#60A5FA' : '#1E3A8A'} 
+      />
+      <StyledText className="text-gray-700 dark:text-gray-300 mt-4 text-lg font-medium text-center">
+        Henüz video eklenmemiş
+      </StyledText>
+      <StyledText className="text-gray-600 dark:text-gray-400 mt-2 text-center">
+        İlk videonuzu eklemek için aşağıdaki butona tıklayın
+      </StyledText>
+    </StyledView>
+  ), [isDark]);
+  
+  const ItemSeparatorComponent = useCallback(() => (
+    <StyledView className="h-4" />
+  ), []);
+  
+
+  
   return (
     <AnimatedPage animationType="fade">
       <StyledView className="flex-1 bg-white dark:bg-gray-900">
         <StatusBar style={isDark ? 'light' : 'dark'} />
         
-        <StyledView className="px-4 pt-4">
+        <StyledView className="px-2 pt-2">
           <StyledTextInput
             className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg px-4 py-3 mb-4 border border-gray-200 dark:border-gray-700"
             placeholder="Video ara..."
@@ -88,53 +126,39 @@ export default function HomeScreen() {
             <FlatList
               data={filteredVideos}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <StyledTouchableOpacity
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-sm mb-4 overflow-hidden"
-                  onPress={() => navigateToVideoDetail(item.id)}
-                >
-                  <StyledImage
-                    source={{ uri: item.thumbnailUri || 'https://via.placeholder.com/300x200' }}
-                    className="w-full h-40 bg-gray-200 dark:bg-gray-700"
-                  />
-                  <StyledView className="p-4">
-                    <StyledText className="text-lg font-bold text-gray-900 dark:text-white mb-1">
-                      {item.name}
-                    </StyledText>
-                    {item.description ? (
-                      <StyledText className="text-gray-600 dark:text-gray-300 mb-2 text-sm" numberOfLines={2}>
-                        {item.description}
-                      </StyledText>
-                    ) : null}
-                    <StyledView className="flex-row justify-between items-center mt-2">
-                      <StyledText className="text-xs text-gray-500 dark:text-gray-400">
-                        {formatDate(item.createdAt)}
-                      </StyledText>
-                      <StyledView className="bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded">
-                        <StyledText className="text-xs text-blue-800 dark:text-blue-300">
-                          {item.category === 'family' && 'Aile'}
-                          {item.category === 'friends' && 'Arkadaşlar'}
-                          {item.category === 'travel' && 'Seyahat'}
-                          {item.category === 'events' && 'Etkinlikler'}
-                          {item.category === 'memories' && 'Anılar'}
-                          {item.category === 'other' && 'Diğer'}
-                        </StyledText>
-                      </StyledView>
-                    </StyledView>
-                  </StyledView>
-                </StyledTouchableOpacity>
-              )}
-              contentContainerStyle={{ paddingBottom: 100 }}
+              renderItem={renderVideoCard}
+              contentContainerStyle={{ 
+                padding: 16,
+                paddingBottom: 100,
+                flexGrow: 1
+              }}
+              ListEmptyComponent={EmptyListComponent}
+              ItemSeparatorComponent={ItemSeparatorComponent}
+              showsVerticalScrollIndicator={false}
+              initialNumToRender={5}
+              maxToRenderPerBatch={5}
+              windowSize={5}
+              removeClippedSubviews={true}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  colors={[isDark ? '#60A5FA' : '#1E3A8A']}
+                  tintColor={isDark ? '#60A5FA' : '#1E3A8A'}
+                />
+              }
             />
           )}
         </StyledView>
         
-        <StyledTouchableOpacity
-          className="absolute bottom-8 right-8 bg-blue-900 dark:bg-blue-700 w-16 h-16 rounded-full items-center justify-center shadow-lg"
-          onPress={navigateToNewVideo}
-        >
-          <Ionicons name="add" size={32} color="#FFFFFF" />
-        </StyledTouchableOpacity>
+        <StyledView className="absolute bottom-6 right-6">
+          <Button
+            title="+"
+            onPress={navigateToNewVideo}
+            variant="primary"
+            className="w-16 h-16 rounded-full"
+          />
+        </StyledView>
       </StyledView>
     </AnimatedPage>
   );

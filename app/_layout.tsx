@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { useColorScheme } from 'nativewind';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -5,12 +6,28 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
+import { initializeCache, manageCacheSize } from '../services/cacheManager';
 
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  
+  useEffect(() => {
+    const setupCache = async () => {
+      await initializeCache();
+      await manageCacheSize();
+    };
+    
+    setupCache();
+    
+    const interval = setInterval(() => {
+      manageCacheSize();
+    }, 24 * 60 * 60 * 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
   
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

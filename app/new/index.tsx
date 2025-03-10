@@ -77,9 +77,7 @@ export default function NewVideoScreen() {
         showsVerticalScrollIndicator={false}
       >
         <StyledView className="items-center mb-8">
-          <StyledText className="text-3xl font-bold text-gray-900 dark:text-white mb-4 text-center">
-            Video Günlüğünüze Hoş Geldiniz
-          </StyledText>
+       
           <StyledText className="text-gray-600 dark:text-gray-400 text-center">
             Lütfen günlüğünüze eklemek istediğiniz videoyu seçin
           </StyledText>

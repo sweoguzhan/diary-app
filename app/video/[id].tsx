@@ -1,8 +1,8 @@
 import { styled } from 'nativewind';
 import { View, Text, ScrollView, Alert } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
-import { Video, ResizeMode } from 'expo-av';
-import { useEffect } from 'react';
+import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
+import { useEffect, useRef, useState } from 'react';
 import { useVideoStore } from '../../store/videoStore';
 import { formatDate } from '../../utils/formatters';
 import { Button } from '../../components/ui/Button';
@@ -20,6 +20,7 @@ import Animated, {
   withSpring,
   Easing
 } from 'react-native-reanimated';
+import { VideoPlayer } from '../../components/video/VideoPlayer';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -34,6 +35,8 @@ export default function VideoDetailScreen() {
   const isDark = colorScheme === 'dark';
   
   const video = videos.find(v => v.id === id);
+  const videoRef = useRef<Video>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   
   const { control, handleSubmit, formState: { errors, isDirty }, reset } = useForm<VideoEditForm>({
     resolver: zodResolver(videoEditSchema),
@@ -63,6 +66,8 @@ export default function VideoDetailScreen() {
     });
   }, [video, reset]);
   
+
+
   const containerStyle = useAnimatedStyle(() => {
     return {
       opacity: opacity.value,
@@ -72,13 +77,7 @@ export default function VideoDetailScreen() {
     };
   });
   
-  const videoContainerStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { scale: scale.value }
-      ]
-    };
-  });
+
   
   if (!video) {
     return (
@@ -135,13 +134,14 @@ export default function VideoDetailScreen() {
     <AnimatedView className="flex-1 bg-white dark:bg-gray-900" style={containerStyle}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
       
-      <StyledVideo
-        source={{ uri: video.uri }}
-        resizeMode={ResizeMode.CONTAIN}
-        className="w-full h-64 bg-black"
-        useNativeControls
-        shouldPlay
+      <VideoPlayer
+        uri={video.uri}
+        startTime={video.cropStartTime || 0}
+        endTime={video.cropEndTime || undefined}
+        className="mb-4"
       />
+      
+    
       
       <StyledView className="p-6">
         <FormInput
@@ -179,4 +179,10 @@ export default function VideoDetailScreen() {
       </StyledView>
     </AnimatedView>
   );
+}
+
+function formatTime(seconds: number = 0) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 } 

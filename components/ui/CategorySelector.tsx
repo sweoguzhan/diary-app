@@ -7,7 +7,6 @@ const StyledText = styled(Text);
 const StyledScrollView = styled(ScrollView);
 const StyledTouchableOpacity = styled(TouchableOpacity);
 
-// Update the interface to accept string type
 export interface CategorySelectorProps {
   selectedCategory: string;
   onSelectCategory: (category: string) => void;

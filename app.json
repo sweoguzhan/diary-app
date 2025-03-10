@@ -13,13 +13,21 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.DiaryApp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.anonymous.DiaryApp"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -45,6 +53,14 @@
     "scheme": "diaryapp",
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "24b2a816-6810-4306-8768-0576034ff67a"
+      }
     }
   }
 }

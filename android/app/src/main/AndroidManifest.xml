@@ -29,6 +29,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="diaryapp"/>
         <data android:scheme="com.anonymous.DiaryApp"/>
+        <data android:scheme="exp+diaryapp"/>
       </intent-filter>
     </activity>
   </application>

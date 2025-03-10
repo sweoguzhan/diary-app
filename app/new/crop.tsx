@@ -97,7 +97,7 @@ export default function VideoCropScreen() {
     videoRef.current?.setPositionAsync(value * 1000);
   };
   
-  const handleNext = () => {
+  const handleNext = async () => {
     const selectedDuration = endTime - startTime;
     
     if (selectedDuration > MAX_DURATION) {

@@ -56,7 +56,9 @@ export default function MetadataScreen() {
         description: data.description,
         uri: selectedVideoUri,
         thumbnailUri,
-        category: data.category
+        category: data.category,
+        cropStartTime: cropStartTime,
+        cropEndTime: cropEndTime
       });
       
       clearSelectedVideo();

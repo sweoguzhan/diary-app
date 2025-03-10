@@ -1,8 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
-import * as FileSystem from 'expo-file-system';
+import { cropVideo } from '../services/ffmpeg';
 import { useVideoThumbnail } from './useVideoThumbnail';
 import Toast from 'react-native-toast-message';
-import { Asset } from 'expo-media-library';
 
 interface CropVideoParams {
   uri: string;
@@ -21,13 +20,14 @@ export function useVideoCropping() {
   return useMutation({
     mutationFn: async ({ uri, startTime, endTime }: CropVideoParams): Promise<CropVideoResult> => {
       try {
-      
-        console.log(`Video kırpma simüle ediliyor: ${startTime}s - ${endTime}s`);
+        console.log(`Video kırpma başlatılıyor: ${uri}, ${startTime}s - ${endTime}s`);
         
-        const thumbnailUri = await generateThumbnail(uri, startTime);
+        const croppedVideoUri = await cropVideo(uri, startTime, endTime);
+        
+        const thumbnailUri = await generateThumbnail(croppedVideoUri, 0);
         
         return {
-          uri: uri, 
+          uri: croppedVideoUri,
           thumbnailUri,
         };
       } catch (error) {
@@ -41,6 +41,7 @@ export function useVideoCropping() {
         type: 'success',
         text1: 'Video Kırpıldı',
         text2: 'Video başarıyla kırpıldı ve kaydedildi.',
+        visibilityTime: 3000,
       });
     },
     onError: (error) => {
@@ -49,6 +50,7 @@ export function useVideoCropping() {
         type: 'error',
         text1: 'Hata',
         text2: error instanceof Error ? error.message : 'Video kırpılırken bir hata oluştu.',
+        visibilityTime: 4000,
       });
     }
   });

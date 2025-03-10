@@ -16,6 +16,8 @@ export interface Video {
   thumbnailUri: string;
   createdAt: string | Date;
   category: VideoCategory;
+  cropStartTime?: number;
+  cropEndTime?: number;
 }
 
 interface VideoState {
@@ -49,6 +51,8 @@ export const useVideoStore = create<VideoState>()(
               ...video,
               id: generateId(),
               createdAt: new Date().toISOString(),
+              cropStartTime: state.cropStartTime,
+              cropEndTime: state.cropEndTime,
             },
             ...state.videos,
           ],
