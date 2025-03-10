@@ -1,0 +1,7 @@
+import { View, Text } from 'react-native';
+import { styled } from 'nativewind';
+
+// Bu dosya artık kullanılmıyor, Expo Router app/ klasörünü kullanıyor
+export default function App() {
+  return null;
+}
