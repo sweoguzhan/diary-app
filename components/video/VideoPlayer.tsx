@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback, memo } from 'react';
 import { View, TouchableOpacity, Dimensions, Text } from 'react-native';
 import { Video, AVPlaybackStatus, ResizeMode } from 'expo-av';
-import { Ionicons } from '@expo/vector-icons';
 import { styled } from 'nativewind';
 
 const StyledView = styled(View);

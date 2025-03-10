@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 import { styled } from 'nativewind';
 import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { formatDate, formatDuration } from '../../utils/formatters';
 import { useColorScheme } from 'nativewind';
