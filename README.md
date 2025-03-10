@@ -84,5 +84,3 @@ Video Günlüğüm, kişisel video anılarınızı düzenlemek, kategorize etmek
 3. **Video Detayları**:
    - Listedeki bir videoya tıklayarak detaylarını görüntüleyin
    - Bilgileri düzenleyin veya videoyu silin
-
-## 🧩 Proje Yapısı
