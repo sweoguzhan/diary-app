@@ -1,6 +1,6 @@
 import { styled } from 'nativewind';
 import { View, Text, ScrollView, ActivityIndicator, Alert } from 'react-native';
-import { router } from 'expo-router';
+import { router, useNavigation } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useVideoStore } from '../../store/videoStore';
@@ -11,7 +11,8 @@ import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from 'nativewind';
 import { CategorySelector } from '../../components/ui/CategorySelector';
 import { useVideoThumbnail } from '../../hooks/useVideoThumbnail';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Toast from 'react-native-toast-message';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -62,9 +63,26 @@ export default function MetadataScreen() {
       });
       
       clearSelectedVideo();
-      
 
-      router.replace('/');
+      Toast.show({
+        text1: 'Video kaydedildi',
+        type: 'success',
+        visibilityTime: 3000,
+        autoHide: true      
+      });
+      
+      try {
+        while (router.canGoBack()) {
+          router.back();
+        }
+        
+        setTimeout(() => {
+          router.push('/');
+        }, 100);
+      } catch (error) {
+        console.error('Navigasyon hatası:', error);
+        router.replace('/');
+      }
       
     } catch (error) {
       setIsSaving(false);
