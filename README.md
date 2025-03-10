@@ -48,8 +48,7 @@ Video Günlüğüm, kişisel video anılarınızı düzenlemek, kategorize etmek
 
 1. Repoyu klonlayın:
    ```bash
-   git clone https://github.com/kullaniciadi/video-gunlugum.git
-   cd video-gunlugum
+   git clone https://github.com//sweoguzhan/diary-app.git
    ```
 
 2. Bağımlılıkları yükleyin:
